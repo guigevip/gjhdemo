@@ -1,0 +1,177 @@
+.r3Title {
+	padding:13px 0 0 17px;
+	width: 100%;
+	height: 35px;
+	font-size: 16px;
+	color: #5e9eaf;
+	font-family: é»‘ä½“;
+	 filter:alpha(opacity:1); opacity:1;
+	position: absolute;
+	z-index: 9999;
+    text-shadow: #0B475E 2px 1px 0;
+    font-weight: 600;
+    }
+.scrollArea {
+	position:relative;
+	top:20%;
+	height: 80%;
+}
+#dftc-r2-newtime{
+	z-index:99999;
+	color:#5E9EAF;
+	font-size:12px;
+	position:absolute;
+	top:45px;
+	right:30px;
+	text-shadow: rgb(11, 71, 94) 2px 1px 0px;
+    font-weight: 300;
+    font-family: ºÚÌå;
+    opacity: 1;
+}
+.scrollArea .row {
+	clear: both;
+	float: left;
+	position: relative;
+	width: 100%;
+	height: 68px;
+	margin: 0;
+	padding: 0;
+	margin-top: 2px;
+	overflow: hidden;
+	border: 0px solid #f00;
+}
+
+.scrollArea .row .cell {
+	float: left;
+	margin-left: 4px;
+	padding: 2px;
+	width: 52px;
+	height: 66px;
+	border: 1px solid #fff;
+}
+
+.scrollArea .row .cell:first-child {
+	margin-left: 0;
+}
+
+.scrollArea .row .cell div {
+	float: left;
+	width: 50px;
+	font-size: 12px;
+	color: #fff;
+}
+
+.scrollArea .row .cell .c {
+	font-family: 'Microsoft YaHei';
+	font-size: 12px;
+}
+
+.scrollArea .row .cell .p {
+	margin-top: 1px;
+	font-size: 12px;
+}
+
+.scrollArea .row .cell .p1 {
+	background-color: #0E800F;
+}
+
+.scrollArea .row .cell .p2 {
+	background-color: #0E800F;
+}
+
+.scrollArea .row .cell .p3 {
+	background-color: #0E800F;
+}
+
+.scrollArea .row .c0 {
+	border: 1px solid #49401c;
+}
+
+.scrollArea .row .c1 {
+	border: 1px solid #2a593a;
+}
+
+.scrollArea .row .c2 {
+	border: 1px solid #0d475c;
+}
+
+.scrollArea .row .c3 {
+	border: 1px solid #393c7d;
+}
+
+.scrollArea .row .c4 {
+	border: 1px solid #4a1e30;
+}
+
+.scrollArea .row .c0 .c {
+	color: #947015;
+}
+
+.scrollArea .row .c0 .p1,
+.c0 .p2,
+.c0 .p3 {
+	color: #947015;
+	background: -webkit-gradient(linear, 0 0, right 0, from(#1D2F34), to(#947015))
+}
+
+.scrollArea .row .c1 .c {
+	color: #80CC6C;
+}
+
+.scrollArea .row .c1 .p1,
+.c1 .p2,
+.c1 .p3 {
+	color: #80CC6C;
+	background: -webkit-gradient(linear, 0 0, right 0, from(#1D2F34), to(#80CC6C))
+}
+
+.scrollArea .row .c2 .c {
+	color: #1D91A4;
+}
+
+.scrollArea .row .c2 .p1,
+.c2 .p2,
+.c2 .p3 {
+	color: #1D91A4;
+	background: -webkit-gradient(linear, 0 0, right 0, from(#1D2F34), to(#1D91A4))
+}
+
+.scrollArea .row .c3 .c {
+	color: #A89CF1;
+}
+
+.scrollArea .row .c3 .p1,
+.c3 .p2,
+.c3 .p3 {
+	color: #A89CF1;
+	background: -webkit-gradient(linear, 0 0, right 0, from(#1D2F34), to(#A89CF1))
+}
+
+.scrollArea .row .c4 .c {
+	color: #C23749;
+}
+
+.scrollArea .row .c4 .p1,
+.c4 .p2,
+.c4 .p3 {
+	color: #C23749;
+	background: -webkit-gradient(linear, 0 0, right 0, from(#1D2F34), to(#C23749))
+}
+
+.scrollArea .row .title {
+	float: left;
+	width: 45px;
+	height: 66px;
+	border: 0px solid #fff;
+	color: #2BAAC9;
+	font-weight: bold;
+	text-align: center;
+	display: table;
+	font-family: 'Microsoft YaHei';
+	font-size: 14px;
+}
+
+.scrollArea .row .title div {
+	display: table-cell;
+	vertical-align: middle;
+}

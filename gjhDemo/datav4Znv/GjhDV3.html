@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<meta name="renderer" content="webkit">
+<title>中兴力维高交会大屏演示</title>
+<style type="text/css">
+.datavLayout {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	color: white;
+}
+.up-side{
+    width: 50%;
+    height: 50%;
+    float:left;
+}
+.down-side{
+    width: 25%;
+    height: 100%;
+    float:left;
+}
+.resource-head{
+    width: 100%;
+    height: 10%;
+    color: black;
+    font-size: 18px;
+}
+.resource-row{
+    width: 100%;
+    height: 30%;
+}
+.resource-col{
+    width: 25%;
+    height: 100%;
+    float:left;
+}
+.resource-col-text{
+    width: 100%;
+    height: 50%;
+    float:left;
+}
+.text-name{
+    margin: 0px;
+    font-size: 12px;
+}
+.text-num{
+    margin: 0px;
+    font-size: 14px;
+}
+.m-table{
+    width: 100%;
+    height: 45%;
+}
+
+.chart {
+	height: 100%;
+	width: 100%;
+}
+
+.backImg {
+	width: 100%;
+	height: 100%;
+	right: 0;
+	overflow: hidden;
+	background: rgba(10, 7, 30, 0.6);
+}
+
+.backImg img {
+	display: block;
+	outline: none;
+	border: 0;
+	height: 100%;
+	width: 100%;
+	z-index: -1;
+	overflow: hidden;
+}
+</style>
+
+<script type="text/javascript" src="js/jQuery-2.2.0.min.js"></script>
+<script type="text/javascript" src="js/echarts/dist/echarts.min.js"></script>
+<script type="text/javascript" src="js/echarts/dist/bmap.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=53oVIOgmSIejwV7EfphPgTynOZbIiVYu"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    //信访数据分析饼状图
+    var petitionChart = echarts.init(document.getElementById('petition-pie'));
+    var petitionOption = {
+	    title: {
+	        text: '信访数据总览',
+	        subtext: '2017 6 1 - 2017 9 30',
+	        x: 'left'
+	    },
+	    tooltip : {
+	        trigger: 'item',
+	        formatter: function(d) {
+	            return d.name+":"+d.value[0]+"条 "+d.value[1]+"%";
+	        }
+	    },
+	    series : [
+	        {
+	            type: 'pie',
+	            roseType: 'angle',
+	            radius : '65%',
+	            center: ['50%', '65%'],
+	            selectedMode: 'single',
+	            data:[
+	                {value:[198,7.5], name: '福田'},
+	                {value:[367,13.9], name: '宝安'},
+	                {value:[338,12.8], name: '龙华'},
+	                {value:[189,7.2], name: '南山'},
+	                {value:[213,8.1], name: '罗湖'},
+	                {value:[226,8.6], name: '盐田'},
+	                {value:[315,11.9], name: '坪山'},
+	                {value:[265,10.0], name: '龙岗'},
+	                {value:[318,12.1], name: '光明新区'},
+	                {value:[209,7.9], name: '大鹏新区'}
+	            ],
+	            label: {
+	                normal: {
+	                    formatter: function(d) {
+	        	            return d.name+"\n"+d.value[0]+"条/"+d.value[1]+"%";
+	        	        },
+	        	        align: 'left',
+	        	        fontSize: 10
+	                }
+	            },
+	            itemStyle: {
+	                emphasis: {
+	                    shadowBlur: 10,
+	                    shadowOffsetX: 0,
+	                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+	                }
+	            }
+	        }
+	    ]
+    };
+    petitionChart.setOption(petitionOption);
+    
+    //危险废物类别分析饼状图
+    var dangerChart = echarts.init(document.getElementById('danger-pie'));
+    var dangerOption = {
+	    title: {
+	        text: '危险废物类别分析',
+	    },
+	    tooltip : {
+	        trigger: 'item',
+	        formatter: "{b}:{c}%"
+	    },
+	    series : [
+	        {
+	            type: 'pie',
+	            roseType: 'radius',
+	            radius: ['20%', '65%'],
+	            center: ['50%', '65%'],
+	            selectedMode: 'single',
+	            data:[
+	                {value:47.5,name: 'HW22'},
+	                {value:14.2, name: 'HW17'},
+	                {value:11.6, name: 'HW18'},
+	                {value:10.3, name: 'HW34'},
+	                {value:3.5, name: 'HW01'},
+	                {value:2.6, name: 'HW46'},
+	                {value:2.4, name: 'HW12'},
+	                {value:2.3, name: 'HW06'},
+	                {value:5.5, name: '其他'}
+	            ],
+	            label: {
+	                normal: {
+	                    formatter: "{b}:{c}%",
+	        	        align: 'left',
+	        	        fontSize: 10
+	                }
+	            },
+	            itemStyle: {
+	                emphasis: {
+	                    shadowBlur: 10,
+	                    shadowOffsetX: 0,
+	                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+	                }
+	            }
+	        }
+	    ]
+    };
+    dangerChart.setOption(dangerOption);
+    
+    //危险区域统计柱状图
+    var areaChart = echarts.init(document.getElementById('area-bar'));
+    var areaOption = {
+        color: ['#3398DB'],
+        title: {
+	        text: '危废区域数据统计',
+	        subtext: '2017 6 1 - 2017 9 30',
+	    },
+        tooltip : {
+            trigger: 'axis',
+            formatter: "{b} {c}万吨",
+            axisPointer : {
+                type : 'shadow'
+            }
+        },
+        grid: {
+            left: 0,
+            right: 0,
+            bottom: '4%',
+            containLabel: true
+        },
+        xAxis: {
+                type: 'category',
+                data: ['福田', '宝安', '龙华', '南山', '龙岗', '罗湖', '盐田', '坪山', '光明', '大鹏'],
+                axisTick: false,
+                axisLabel: {
+                    show: true,
+                    interval: 0
+                }
+        },
+        yAxis: {
+	         type: 'value',
+	         axisTick: false,
+	         axisLine: {
+	             show: false,
+	             onZero: false  
+	         },
+	         min: 0,
+	         max: 6,
+	         interval: 1
+	    },
+        series : [
+            {
+                name:'危险数据统计',
+                type:'bar',
+                barWidth: '50%',
+                data:[
+                    3.14,
+                    4.13,
+                    4.24,
+                    3.69,
+                    {
+                        value: 5.33,
+                        label: {
+                            normal: {
+                                show: true,
+                                position: 'top'
+                            }
+                        }
+                    },
+                    2.35,
+                    2.89,
+                    4.69,
+                    5.22,
+                    3.94
+                ]
+            }
+        ]
+     };
+     areaChart.setOption(areaOption);
+     
+     //组织架构关系图表
+     var architecChart = echarts.init(document.getElementById('architec-graph'));
+     var architecOption = {
+	     title: {
+	        text: '组织架构'
+	     },
+	     legend: {
+	       left: 'right',
+	         top: 'bottom',
+	         orient: 'vertical',
+	         align: 'left',
+	         data: [
+	         {
+	             name: '一期建设',
+	             icon: 'circle'
+	         }, 
+	         {
+	             name: '二期建设',
+	             icon: 'circle'
+	         },
+	         {
+	             name: '三期建设',
+	             icon: 'circle'
+	         } ]
+	     },
+	     series: [{
+	         type: 'graph',
+	         name: "组织架构",
+	         layout: 'force',
+	         symbol: 'circle',
+	         label: {
+	             normal: {
+	                 show: true
+	             }
+	         },
+	         force: {
+	             edgeLength: 85,  
+	             repulsion: 80
+	         },
+	         lineStyle: {
+	             normal: {
+	                 curveness: 0.3
+	             }
+	         },
+	         draggable: true,
+	         data: [ 
+	         {
+	             id: 1,
+	             category: 0,
+	             name: '城市立体感知',
+	             value: 20,
+	             symbolSize: 50
+	         },
+	         {
+	             id: 2,
+	             category: 1,
+	             name: '环保局',
+	             value: 20,
+	             symbolSize: 35
+	         },
+	         {
+	             id : 3,
+	             category : 2,
+	             name : '应急办',
+	             value : 20,
+	             symbolSize : 35
+	         },
+	         {
+	             id : 4,
+	             category : 2,
+	             name : '气象局',
+	             value : 20,
+	             symbolSize : 35
+	         },
+	         {
+	             id : 5,
+	             category : 2,
+	             name : '监察队',
+	             value : 20,
+	             symbolSize : 35
+	         },
+	         {
+	             id : 6,
+	             category : 3,
+	             name : '工商局',
+	             value : 20,
+	             symbolSize : 35
+	         },
+	         {
+	             id : 7,
+	             category : 3,
+	             name : '水务局',
+	             value : 20,
+	             symbolSize : 35
+	         },
+	         {
+	             id : 8,
+	             category : 3,
+	             name : '交通局',
+	             value : 20,
+	             symbolSize : 35
+	         },
+	         {
+	             id : 9,
+	             category : 3,
+	             name : '水源办',
+	             value : 20,
+	             symbolSize : 35
+	         },
+	         {
+	             id : 10,
+	             category : 3,
+	             name : '消防局',
+	             value : 20,
+	             symbolSize : 35
+	         },
+	         {
+	             id : 11,
+	             category : 3,
+	             name : '国土局',
+	             value : 20,
+	             symbolSize : 35
+	         }],
+	         categories: [
+	             {name: '城市立体感知'},
+	             {name: '一期建设'},
+	             {name : '二期建设'},
+	             {name : '三期建设'}
+	         ],
+	         links: [
+	           {source: 0, target: 1},
+	           {source: 0, target: 2},
+	           {source: 0, target: 3},
+	           {source: 0, target: 4},
+	           {source: 0, target: 5},
+	           {source: 0, target: 6},
+	           {source: 0, target: 7},
+	           {source: 0, target: 8},
+	           {source: 0, target: 9},
+	           {source: 0, target: 10}
+	         ]
+	     }]
+     };
+     architecChart.setOption(architecOption);
+     
+     //空气质量统计曲线图
+     var airChart = echarts.init(document.getElementById('air-line'));
+     var airOption = {
+	     title: {
+	         text: '空气质量月度曲线'
+	     },
+	     tooltip: {
+	         trigger: 'axis'
+	     },
+	     grid: {
+	         show: false,
+	         top: '20%',
+	         bottom: '15%',
+	         width: '85%'
+	     },
+	     xAxis: {
+	         type: 'category',
+	         axisTick: false,
+	         data: [
+	             {value: '9.20'},
+	             {value: '9.25'},
+	             {value: '10.01'},
+	             {value: '10.05'},
+	             {value: '10.10'},
+	             {value: '10.20'},
+	             {value: '10.25'}
+	         ]
+	     },
+	     yAxis: {
+	         type: 'value',
+	         axisTick: false,
+	         axisLine: {
+	             show: false,
+	             onZero: false  
+	         },
+	         min: 0,
+	         max: 120,
+	         interval: 20
+	     },
+	     series: [{
+	         name: '宝安',
+	         type: 'line',
+	         data: [49, 31, 33, 42, 42, 37, 103]
+	     },
+	     {
+	         name: '盐田',
+	         type: 'line',
+	         data: [70, 22, 38, 45, 40, 27, 68]
+	     },
+	     {
+	         name: '龙华',
+	         type: 'line',
+	         data: [58, 33, 46, 45, 53, 36, 105]
+	     },
+	     {
+	         name: '南山',
+	         type: 'line',
+	         data: [46, 24, 40, 41, 43, 37, 112]
+	     },
+	     {
+	         name: '罗湖',
+	         type: 'line',
+	         data: [64, 19, 42, 30, 35, 29, 95]
+	     }]
+     };
+     airChart.setOption(airOption);
+     
+     //实时空气质量
+     var airMap;
+     var geoCoordMap = {
+         "光明":[113.883802,22.554996],
+         "宝安":[113.883802,22.554996],
+         "南山":[113.930413,22.533287],
+         "福田":[114.055072,22.521521],
+         "罗湖":[114.131459,22.548389],
+         "龙华":[114.045422,22.696667],
+         "盐田":[114.236739,22.557001],
+         "龙岗":[114.246899,22.720974],
+         "坪山":[114.350584,22.708881],
+         "大鹏":[114.474621,22.597612]
+     };
+     var convertData = function (data) {
+         var res = [];
+         for (var i = 0; i < data.length; i++) {
+             var geoCoord = geoCoordMap[data[i].name];
+             if (geoCoord) {
+                 res.push({
+                     name: data[i].name,
+                     value: geoCoord.concat(data[i].value)
+                 });
+             }
+         }
+         return res;
+     };
+
+     $.get('js/json/shenzhen.json', function (json) {
+	     echarts.registerMap('shenzhen', json);
+	     airMap = echarts.init(document.getElementById('air-map'));
+	     airMap.setOption({
+	         geo: {
+	             map: 'shenzhen'
+	         },
+	         series: [{
+	             type: 'scatter',
+	             coordinateSystem: 'geo',
+	             data: convertData([
+	                 {name: "光明", value: 9}
+	             ])
+	         }]
+	     });
+     });
+     
+     //感知资源总览仪表盘
+     var rsGaugeChart = echarts.init(document.getElementById('resource-gauge'));
+     var rsGaugeOption = {
+         series: [
+             {
+                 name: '用户活跃度',
+                 type: 'gauge',
+                 title: {
+                     show: true,
+                     offsetCenter: [0, '90%'],
+                     textStyle: {
+                         color: '#hhh',
+                         fontSize: 12
+                     }
+                 },
+                 radius: '90%',
+                 center: ['16.67%', '50%'],
+                 axisLine: {
+                     show: true,
+                     lineStyle: {
+                         width: 3,
+                         color:[[0.82, '#63869e'], [1, '#c23531']]
+                     }
+                 },
+                 //分隔线样式。
+                 splitLine: false,
+                 axisTick: false,
+                 pointer: false,
+                 detail: {
+                     color: '#FF0000',
+                     formatter: '{value}%',
+                     offsetCenter: [0, 0],
+                     fontSize: 12
+                 },
+                 data: [{value: 82, name: '用户活跃度'}]
+             },
+             {
+                 name: '设备在线率',
+                 type: 'gauge',
+                 title: {
+                     show: true,
+                     offsetCenter: [0, '90%'],
+                     textStyle: {
+                         color: '#hhh',
+                         fontSize: 12
+                     }
+                 },
+                 radius: '90%',
+                 center: ['50%', '50%'],
+                 axisLine: {
+                     show:true,
+                     lineStyle: {
+                         width: 3,
+                         color:[[0.95, '#63869e'], [1, '#c23531']]
+                     }
+                 },
+                 //分隔线样式。
+                 splitLine: false,
+                 axisTick: false,
+                 pointer: false,
+                 detail: {
+                     color: '#FF0000',
+                     formatter: '{value}%',
+                     offsetCenter: [0, 0],
+                     fontSize: 12
+                 },
+                 data: [{value: 95, name: '设备在线率'}]
+             },
+             {
+                 name: '故障率',
+                 type: 'gauge',
+                 title: {
+                     show: true,
+                     offsetCenter: [0, '90%'],
+                     textStyle: {
+                         color: '#hhh',
+                         fontSize: 12
+                     }
+                 },
+                 radius: '90%',
+                 center: ['83.33%', '50%'],
+                 axisLine: {
+                     show:true,
+                     lineStyle: {
+                         width: 3,
+                         color:[[0.04, '#63869e'], [1, '#c23531']]
+                     }
+                 },
+                 //分隔线样式。
+                 splitLine: false,
+                 axisTick: false,
+                 pointer: false,
+                 detail: {
+                     color: '#FF0000',
+                     formatter: '{value}%',
+                     offsetCenter: [0, 0],
+                     fontSize: 12
+                 },
+                 data: [{value: 4, name: '故障率'}]
+             }
+         ]
+     };
+     rsGaugeChart.setOption(rsGaugeOption);
+     
+     //窗口大小变化
+     window.onresize = function() {
+         //图表大小
+         areaChart.resize();
+         dangerChart.resize();
+         petitionChart.resize();
+         architecChart.resize();
+         airChart.resize();
+         airMap.resize();
+         rsGaugeChart.resize();
+     };
+});
+</script>
+</head>
+<body>
+    <div class="datavLayout">
+		<div class="top" style="background-color: gray;width:100%;height: 66.6%;">
+			<div class="left" style="width:50%;height:100%;float:left;background:url(img/bg_01.png)" id="air-map">
+			</div>
+			<div class="right" style="width:50%;height:100%;float:left;">
+			    <div class="up-side" id="touch-resource">
+			        <div class="resource-head">
+			            <span>感知资源总览</span>
+			            <img alt="" src="">
+			        </div>
+			        <div class="resource-row">
+			            <div class="resource-col">
+			                <p>污染源企业</p>
+			            </div>
+			            <div class="resource-col">
+			                <div class="resource-col-text">
+			                    <p class="text-name">企业总数</p>
+			                    <p class="text-num">3826</p>
+			                </div>
+			                <div class="resource-col-text">
+			                    <p class="text-name">废水企业</p>
+			                    <p class="text-num">485</p>
+			                </div>
+			            </div>
+			            <div class="resource-col">
+			                <div class="resource-col-text">
+			                    <p class="text-name">放射源企业</p>
+			                    <p class="text-num">980</p>
+			                </div>
+			                <div class="resource-col-text">
+			                    <p class="text-name">废气企业</p>
+			                    <p class="text-num">640</p>
+			                </div>
+			            </div>
+			            <div class="resource-col">
+			                <div class="resource-col-text">
+			                    <p class="text-name">危废企业</p>
+			                    <p class="text-num">1280</p>
+			                </div>
+			                <div class="resource-col-text">
+			                </div>
+			            </div>
+			        </div>
+			        <div class="resource-row">
+			            <div class="resource-col">
+			                <p>感知点位总览</p>
+			                <img alt="" src="">
+			            </div>
+			            <div class="resource-col">
+			                <div class="resource-col-text">
+			                    <p class="text-name">空气站</p>
+			                    <p class="text-num">45</p>
+			                </div>
+			                <div class="resource-col-text">
+			                    <p class="text-name">摄像头</p>
+			                    <p class="text-num">220</p>
+			                </div>
+			            </div>
+			            <div class="resource-col">
+			                <div class="resource-col-text">
+			                    <p class="text-name">水站</p>
+			                    <p class="text-num">105</p>
+			                </div>
+			                <div class="resource-col-text">
+			                    <p class="text-name">土壤站</p>
+			                    <p class="text-num">32</p>
+			                </div>
+			            </div>
+			            <div class="resource-col">
+			                <div class="resource-col-text">
+			                    <p class="text-name">噪声站</p>
+			                    <p class="text-num">26</p>
+			                </div>
+			                <div class="resource-col-text">
+			                    <p class="text-name">浮标站</p>
+			                    <p class="text-num">24</p>
+			                </div>
+			            </div>
+			        </div>
+			        <div class="resource-row" id="resource-gauge"></div>
+			    </div>
+			    <div class="up-side" id="air-line">
+			    </div>
+			    <div class="up-side" id="monitor-table">
+			        <div class="resource-head">
+			            <span>污染源自动监控</span>
+			            <select style="float:right">
+			                <option value="ns">南山</option>
+			                <option value="lg">龙岗</option>
+			                <option value="lh">龙华</option>
+			                <option value="ba">宝安</option>
+			                <option value="yt">盐田</option>
+			            </select>
+			        </div>
+			        <div class="m-table">
+			            <table style="width: 100%;">
+							<caption>边框表格布局</caption>
+							<thead>
+								<tr>
+									<th>名称</th>
+									<th>城市</th>
+									<th>邮编</th>
+								</tr>
+							</thead>
+							<tbody style="display:block; max-height:50px;overflow-y: scroll;">
+								<tr>
+									<td>Tanmay</td>
+									<td>Bangalore</td>
+									<td>560001</td>
+								</tr>
+								<tr>
+									<td>Sachin</td>
+									<td>Mumbai</td>
+									<td>400003</td>
+								</tr>
+								<tr>
+									<td>Uma</td>
+									<td>Pune</td>
+									<td>411027</td>
+								</tr>
+							</tbody>
+						</table>
+			        </div>
+			        <div class="m-table">
+			        </div>
+			    </div>
+			    <div class="up-side" id="architec-graph">
+			    </div>
+			</div>
+		</div>
+		<div class="down" style="width:100%;height: 33.3%;">
+		    <div class="down-side"></div>
+		    <div class="down-side" id="petition-pie"></div>
+		    <div class="down-side" id="area-bar"></div>
+		    <div class="down-side" id="danger-pie">
+		        <div class='backImg'>
+				    <img src="img/bg_01.png" />
+				</div>
+				<div id="danger-pie" class="chart"></div>
+		    </div>
+		</div>
+	</div>
+</body>
+</html>

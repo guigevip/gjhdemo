@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<meta name="renderer" content="webkit">
+<title>中兴力维高交会大屏演示</title>
+<link rel="stylesheet" href="js/bootstrap-3.3.7/css/bootstrap.min.css">  
+
+<style type="text/css">
+.bg, .bg img{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+.datavLayout {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	color: white;
+}
+.up-side{
+    width: 50%;
+    height: 50%;
+    float:left;
+}
+.down-side{
+    width: 25%;
+    height: 100%;
+    float:left;
+}
+.resource-head{
+    width: 100%;
+    height: 10%;
+    color: black;
+    font-size: 18px;
+    color: #FFFFFF;
+    font-family: '黑体';
+}
+.resource-row{
+    width: 100%;
+    height: 30%;
+}
+.resource-col{
+    width: 25%;
+    height: 100%;
+    float:left;
+}
+.resource-col-text{
+    width: 100%;
+    height: 50%;
+    float:left;
+}
+.col-title{
+    font-size: 14px;
+}
+.text-name{
+    color: #FFFFFF;
+    fontFamily: Microsoft YaHei;
+    font-size: 12px;
+}
+.text-num{
+    color: #05d3ff;
+    fontFamily: ArialMT;
+    font-size: 14px;
+}
+p{
+    margin: 0px;
+    white-space: nowrap;
+    text-overflow:ellipsis;
+    overflow:hidden;
+}
+.m-content{
+    width: 100%;
+    height: 90%;
+}
+.m-content table{
+    width: 100%;
+    text-align: center;
+}
+.m-content table caption{
+    color: #FFFFFF;
+}
+.m-content table tr th{
+    border: 1px #034479 solid;
+    text-align: center;
+}
+.m-content table tr td{
+    background-color: #0c2255
+}
+.m-content table tbody{
+    display:block;
+    height:80px;
+    overflow-y:hidden;
+    overflow-x:hidden;
+}
+.m-content table thead, tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;
+}
+#lg, #lh, #ba, #yt{
+    display: none;
+}
+.areaSel{
+    float: right;
+    background-color: #15184B;
+}
+.air-msg{
+    width:100%;
+    height:10%;
+}
+.air-msg .msg-item{
+    width:33.33%;
+    height:100%;
+    float: left;
+    text-align:center;
+    font-size: 20px;
+}
+.msg-item span{
+    color: #05d3ff;
+}
+#air-map{
+    width:100%;
+    height:80%;
+}
+.gis-map{
+    width: 100%;
+    height: 100%;
+}
+.gis-msg{
+    width: 100%;
+    height: 100%;
+    display: none;
+    padding: 0 15%;
+}
+.gis-msg-left{
+    width:40%;
+    height:100%;
+    float:left;
+    padding: 20% 0;
+}
+.gis-msg-right{
+	width:30%;
+	height:100%;
+	float:right;
+	padding: 10% 0;
+}
+.gis-msg-right ul{
+	padding-left: 0px;
+	height: 100%;
+	margin-bottom: 0;
+}
+.gis-msg-right .air-list li{
+	list-style-type:none;
+	border: 1px #034479 solid;
+	height: 16.67%;
+    vertical-align:middle;
+}
+.gis-msg-right .water-list li{
+	list-style-type:none;
+	border: 1px #034479 solid;
+	height: 25%;
+    vertical-align:middle;
+}
+.name{
+    float: left;
+    width: 70%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    height: 100%;
+    display: block;
+}
+.value{
+    float: right;
+    width: 30%;
+    text-align: right;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    height: 100%;
+    display: block;
+}
+.anchorBL{  
+       display:none;  
+}
+</style>
+
+<script type="text/javascript" src="js/jQuery-2.2.0.min.js"></script>
+<script type="text/javascript" src="js/echarts/dist/echarts.min.js"></script>
+<script type="text/javascript" src="js/echarts/dist/bmap.js"></script>
+<script type="text/javascript" src="js/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=53oVIOgmSIejwV7EfphPgTynOZbIiVYu"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+     //空气质量统计曲线图
+     var geoCoordGisMap = {
+	     "air-a":[113.916059,22.518071],
+	     "air-b":[113.837871,22.700101],
+	     "air-c":[114.354145,22.681429],
+	     "water-a":[114.038516,22.792891],
+	     "water-b":[114.235137,22.784895],
+	     "water-c":[114.159823,22.580554]
+	 };
+	 var convertGisData = function (data) {
+	     var res = [];
+	     for (var i = 0; i < data.length; i++) {
+	         var geoCoord = geoCoordGisMap[data[i].name];
+	         if (geoCoord) {
+	             res.push({
+	                 name: data[i].name,
+	                 value: geoCoord.concat(data[i].value)
+	             });
+	         }
+	     }
+	     return res;
+	 };
+     var gisMapChart = echarts.init(document.getElementById('gis-map'));
+     var gisMapOption = {
+	         title: {
+	             text: '当前态势',
+	             textStyle: {
+	                 color: '#FFFFFF',
+	                 fontFamily: '黑体',
+	                 fontSize: 18
+	             }
+	         },
+	         bmap: {
+	             center: [114.143726, 22.684097],
+	             zoom: 10,
+	             roam: true,
+	             mapStyle: {
+	                 styleJson: [{
+	                     'featureType': 'water',
+	                     'elementType': 'all',
+	                     'stylers': {
+	                         'color': '#05D0FF'
+	                     }
+	                 }, {
+	                     'featureType': 'land',
+	                     'elementType': 'all',
+	                     'stylers': {
+	                         'color': '#060a3a'
+	                     }
+	                 }, {
+	                     'featureType': 'railway',
+	                     'elementType': 'all',
+	                     'stylers': {
+	                         'visibility': 'off'
+	                     }
+	                 }, {
+	                     'featureType': 'highway',
+	                     'elementType': 'all',
+	                     'stylers': {
+	                         'visibility': 'off'
+	                     }
+	                 }, {
+	                     'featureType': 'arterial',
+	                     'elementType': 'geometry',
+	                     'stylers': {
+	                         'color': '#fefefe'
+	                     }
+	                 }, {
+	                     'featureType': 'arterial',
+	                     'elementType': 'geometry.fill',
+	                     'stylers': {
+	                         'color': '#fefefe'
+	                     }
+	                 }, {
+	                     'featureType': 'poi',
+	                     'elementType': 'all',
+	                     'stylers': {
+	                         'visibility': 'off'
+	                     }
+	                 }, {
+	                     'featureType': 'green',
+	                     'elementType': 'all',
+	                     'stylers': {
+	                         'visibility': 'off'
+	                     }
+	                 }, {
+	                     'featureType': 'subway',
+	                     'elementType': 'all',
+	                     'stylers': {
+	                         'visibility': 'off'
+	                     }
+	                 }, {
+	                     'featureType': 'manmade',
+	                     'elementType': 'all',
+	                     'stylers': {
+	                         'visibility': 'off'
+	                     }
+	                 }, {
+	                     'featureType': 'local',
+	                     'elementType': 'all',
+	                     'stylers': {
+	                         'color': '#d1d1d1'
+	                     }
+	                 }, {
+	                     'featureType': 'arterial',
+	                     'elementType': 'labels',
+	                     'stylers': {
+	                         'visibility': 'off'
+	                     }
+	                 }, {
+	                     'featureType': 'boundary',
+	                     'elementType': 'all',
+	                     'stylers': {
+	                         'color': '#292d4f',
+	                         'visibility': "on"
+	                     }
+	                 }, {
+	                     'featureType': 'building',
+	                     'elementType': 'all',
+	                     'stylers': {
+	                         'visibility': 'off'
+	                     }
+	                 }, {
+	                     'featureType': 'label',
+	                     'elementType': 'labels.text.fill',
+	                     'stylers': {
+	                         'color': '#999999'
+	                     }
+	                 }]
+	             }
+	         },
+	         series: {
+	             name: 'checkpoint',
+	             type: 'scatter',
+	             coordinateSystem: 'bmap',
+	             data: convertGisData([
+	                 {name: 'air-a', value: 'air-a'},
+	                 {name: 'air-b', value: 'air-b'},
+	                 {name: 'air-c', value: 'air-c'},
+	                 {name: 'water-a', value: 'water-a'},
+	                 {name: 'water-b', value: 'water-b'},
+	                 {name: 'water-c', value: 'water-c'}
+	             ]),
+	             symbol: 'image://img/ico_map2_water-location.png'
+	         }
+     }
+     gisMapChart.setOption(gisMapOption);
+     //var bmap = gisMapChart.getModel().getComponent('bmap').getBMap();
+     //点击散点时跳出数据页面
+     gisMapChart.on('click', function(params){
+         console.log(params.data.name);
+         $('.gis-map').hide();
+         var obj = document.getElementById(params.data.name);
+         $(obj).show();
+     });
+     
+     $('.gis-msg-left p').on('click', function(){
+         $('.gis-msg').hide();
+         $('.gis-map').show();
+     });
+     
+     //窗口大小变化
+     window.onresize = function() {
+         //图表大小
+         areaChart.resize();
+         dangerChart.resize();
+         petitionChart.resize();
+         architecChart.resize();
+         airChart.resize();
+         airMap.resize();
+         rsGaugeChart.resize();
+         gisMapChart.resize();
+     };
+     
+     //区域变化时，切换table
+     $('.areaSel').on('change', function(){
+         var id = $(this).val();
+         $('.m-content').hide();
+         var obj = document.getElementById(id);
+         $(obj).show();
+     });
+     
+     //table表格内容滚动
+     setInterval("waterInterval()", 1000);
+     setInterval("airInterval()", 1000);
+});
+
+function change(table) {
+    var row = table.insertRow(table.rows.length);
+    for(j=0;j<table.rows[0].cells.length;j++){
+	    var cell = row.insertCell(j);
+	    cell.innerHTML = table.rows[0].cells[j].innerHTML;
+    }
+    table.deleteRow(0);
+}
+
+function airInterval() {
+    var id = $('.areaSel').val();
+    var airtable = $("#"+id+" .air-monitor tbody")[0];
+    change(airtable);
+}
+
+function waterInterval() {
+    var id = $('.areaSel').val();
+    var watertable = $("#"+id+" .water-monitor tbody")[0];
+    change(watertable);
+}
+</script>
+</head>
+<body>
+    <div class="bg">
+        <img src="img/bg_frame.png">
+    </div>
+    <div class="datavLayout">
+		<div class="top" style="width:100%;height: 66.6%;">
+			<div class="left" style="width:50%;height:100%;float:left;" >
+			    <div class="resource-head">
+			        <span>实时空气质量</span>
+			    </div>
+			    <div class="air-msg">
+					<div class="msg-item">
+					    <p>AQI指数</p>
+					    <span id="aqi">55</span>
+					</div>
+					<div class="msg-item">
+					    <p>首要污染物</p>
+					    <span id="stain">PM2.5</span>
+					</div>
+					<div class="msg-item">
+					    <p>浓度(μg/m³)</p>
+					    <span id="conc">45</span>
+					</div>
+				</div>
+			    <div id="air-map"></div>
+			</div>
+			<div class="right" style="width:50%;height:100%;float:left;">
+			    <div class="up-side" id="touch-resource">
+			        <div class="resource-head">
+			            <span>感知资源总览</span>
+			        </div>
+			        <div class="resource-row">
+			            <div class="resource-col">
+			                <p class="col-title">污染源企业</p>
+			                <img alt="" src="img/ico_company.png" style="width:80%;height:80%">
+			            </div>
+			            <div class="resource-col">
+			                <div class="resource-col-text">
+			                    <p class="text-name">企业总数</p>
+			                    <p class="text-num">3826</p>
+			                </div>
+			                <div class="resource-col-text">
+			                    <p class="text-name">废水企业</p>
+			                    <p class="text-num">485</p>
+			                </div>
+			            </div>
+			            <div class="resource-col">
+			                <div class="resource-col-text">
+			                    <p class="text-name">放射源企业</p>
+			                    <p class="text-num">980</p>
+			                </div>
+			                <div class="resource-col-text">
+			                    <p class="text-name">废气企业</p>
+			                    <p class="text-num">640</p>
+			                </div>
+			            </div>
+			            <div class="resource-col">
+			                <div class="resource-col-text">
+			                    <p class="text-name">危废企业</p>
+			                    <p class="text-num">1280</p>
+			                </div>
+			                <div class="resource-col-text">
+			                </div>
+			            </div>
+			        </div>
+			        <div class="resource-row">
+			            <div class="resource-col">
+			                <p class="col-title">感知点位总览</p>
+			                <img alt="" src="img/ico_perceptual point.png" style="width:80%;height:80%">
+			            </div>
+			            <div class="resource-col">
+			                <div class="resource-col-text">
+			                    <p class="text-name">空气站</p>
+			                    <p class="text-num">45</p>
+			                </div>
+			                <div class="resource-col-text">
+			                    <p class="text-name">摄像头</p>
+			                    <p class="text-num">220</p>
+			                </div>
+			            </div>
+			            <div class="resource-col">
+			                <div class="resource-col-text">
+			                    <p class="text-name">水站</p>
+			                    <p class="text-num">105</p>
+			                </div>
+			                <div class="resource-col-text">
+			                    <p class="text-name">土壤站</p>
+			                    <p class="text-num">32</p>
+			                </div>
+			            </div>
+			            <div class="resource-col">
+			                <div class="resource-col-text">
+			                    <p class="text-name">噪声站</p>
+			                    <p class="text-num">26</p>
+			                </div>
+			                <div class="resource-col-text">
+			                    <p class="text-name">浮标站</p>
+			                    <p class="text-num">24</p>
+			                </div>
+			            </div>
+			        </div>
+			        <div class="resource-row" id="resource-gauge"></div>
+			    </div>
+			    <div class="up-side" id="air-line">
+			    </div>
+			    <div class="up-side" id="monitor-table">
+			        <div class="resource-head">
+			            <span>污染源自动监控</span>
+			            <select class="areaSel">
+			                <option value="ns">南山区</option>
+			                <option value="lg">龙岗区</option>
+			                <option value="lh">龙华区</option>
+			                <option value="ba">宝安区</option>
+			                <option value="yt">盐田区</option>
+			            </select>
+			        </div>
+			        <div class="m-content" id="ns">
+			            <table class="water-monitor">
+							<caption>废水实时自动监控</caption>
+							<thead>
+								<tr>
+									<th>站点名称</th>
+									<th>化学需氧量浓度(mg/l)</th>
+									<th>氨氮浓度(mg/l)</th>
+									<th>检测时间</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>N001号监测点</td>
+									<td>42.00</td>
+									<td>2.88</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>N002号监测点</td>
+									<td>43.87</td>
+									<td>2.73</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>N003号监测点</td>
+									<td>45.23</td>
+									<td>2.90</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>N004号监测点</td>
+									<td>55.00</td>
+									<td>3.10</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>N005号监测点</td>
+									<td>34.76</td>
+									<td>2.75</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="air-monitor">
+							<caption>废气实时自动监控</caption>
+							<thead>
+								<tr>
+									<th>站点名称</th>
+									<th>二氧化碳浓度(mg/m<sup>3</sup>)</th>
+									<th>氮氧化物浓度(mg/m<sup>3</sup>)</th>
+									<th>烟尘浓度(mg/m<sup>3</sup>)</th>
+									<th>检测时间</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>N101号监测点</td>
+									<td>7.00</td>
+									<td>52.00</td>
+									<td>32.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>N102号监测点</td>
+									<td>6.00</td>
+									<td>53.00</td>
+									<td>40.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>N103号监测点</td>
+									<td>8.00</td>
+									<td>60.00</td>
+									<td>38.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>N104号监测点</td>
+									<td>11.00</td>
+									<td>55.00</td>
+									<td>37.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>N105号监测点</td>
+									<td>12.00</td>
+									<td>54.00</td>
+									<td>35.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+							</tbody>
+						</table>
+			        </div>
+			        <div class="m-content" id="lg">
+			            <table class="water-monitor">
+							<caption>废水实时自动监控</caption>
+							<thead>
+								<tr>
+									<th>站点名称</th>
+									<th>化学需氧量浓度(mg/l)</th>
+									<th>氨氮浓度(mg/l)</th>
+									<th>检测时间</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>G001号监测点</td>
+									<td>39.93</td>
+									<td>3.11</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>G002号监测点</td>
+									<td>41.71</td>
+									<td>2.62</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>G003号监测点</td>
+									<td>43.00</td>
+									<td>3.25</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>G004号监测点</td>
+									<td>52.28</td>
+									<td>2.98</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>G005号监测点</td>
+									<td>33.05</td>
+									<td>3.62</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="air-monitor">
+							<caption>废气实时自动监控</caption>
+							<thead>
+								<tr>
+									<th>站点名称</th>
+									<th>二氧化碳浓度(mg/m<sup>3</sup>)</th>
+									<th>氮氧化物浓度(mg/m<sup>3</sup>)</th>
+									<th>烟尘浓度(mg/m<sup>3</sup>)</th>
+									<th>检测时间</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>G101号监测点</td>
+									<td>8.00</td>
+									<td>47.00</td>
+									<td>36.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>G102号监测点</td>
+									<td>8.00</td>
+									<td>80.00</td>
+									<td>40.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>G103号监测点</td>
+									<td>10.00</td>
+									<td>75.00</td>
+									<td>36.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>G104号监测点</td>
+									<td>6.00</td>
+									<td>53.00</td>
+									<td>37.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>G105号监测点</td>
+									<td>9.00</td>
+									<td>60.00</td>
+									<td>41.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+							</tbody>
+						</table>
+			        </div>
+			        <div class="m-content" id="lh">
+			            <table class="water-monitor">
+							<caption>废水实时自动监控</caption>
+							<thead>
+								<tr>
+									<th>站点名称</th>
+									<th>化学需氧量浓度(mg/l)</th>
+									<th>氨氮浓度(mg/l)</th>
+									<th>检测时间</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>H001号监测点</td>
+									<td>39.89</td>
+									<td>2.82</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>H002号监测点</td>
+									<td>48.90</td>
+									<td>2.80</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>H003号监测点</td>
+									<td>42.95</td>
+									<td>4.09</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>H004号监测点</td>
+									<td>41.92</td>
+									<td>2.99</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>H005号监测点</td>
+									<td>43.78</td>
+									<td>4.13</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="air-monitor">
+							<caption>废气实时自动监控</caption>
+							<thead>
+								<tr>
+									<th>站点名称</th>
+									<th>二氧化碳浓度(mg/m<sup>3</sup>)</th>
+									<th>氮氧化物浓度(mg/m<sup>3</sup>)</th>
+									<th>烟尘浓度(mg/m<sup>3</sup>)</th>
+									<th>检测时间</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>H101号监测点</td>
+									<td>10.00</td>
+									<td>61.00</td>
+									<td>42.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>H102号监测点</td>
+									<td>12.00</td>
+									<td>50.00</td>
+									<td>35.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>H103号监测点</td>
+									<td>6.00</td>
+									<td>45.00</td>
+									<td>37.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>H104号监测点</td>
+									<td>9.00</td>
+									<td>48.00</td>
+									<td>36.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>H105号监测点</td>
+									<td>6.00</td>
+									<td>55.00</td>
+									<td>34.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+							</tbody>
+						</table>
+			        </div>
+			        <div class="m-content" id="ba">
+			            <table class="water-monitor">
+							<caption>废水实时自动监控</caption>
+							<thead>
+								<tr>
+									<th>站点名称</th>
+									<th>化学需氧量浓度(mg/l)</th>
+									<th>氨氮浓度(mg/l)</th>
+									<th>检测时间</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>B001号监测点</td>
+									<td>45.13</td>
+									<td>3.01</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>B002号监测点</td>
+									<td>54.85</td>
+									<td>3.21</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>B003号监测点</td>
+									<td>34.71</td>
+									<td>2.34</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>B004号监测点</td>
+									<td>31.30</td>
+									<td>2.90</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>B005号监测点</td>
+									<td>39.65</td>
+									<td>2.52</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="air-monitor">
+							<caption>废气实时自动监控</caption>
+							<thead>
+								<tr>
+									<th>站点名称</th>
+									<th>二氧化碳浓度(mg/m<sup>3</sup>)</th>
+									<th>氮氧化物浓度(mg/m<sup>3</sup>)</th>
+									<th>烟尘浓度(mg/m<sup>3</sup>)</th>
+									<th>检测时间</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>B101号监测点</td>
+									<td>6.00</td>
+									<td>61.00</td>
+									<td>38.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>B102号监测点</td>
+									<td>7.00</td>
+									<td>62.00</td>
+									<td>40.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>B103号监测点</td>
+									<td>8.00</td>
+									<td>64.00</td>
+									<td>42.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>B104号监测点</td>
+									<td>9.00</td>
+									<td>64.00</td>
+									<td>43.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>B105号监测点</td>
+									<td>10.00</td>
+									<td>63.00</td>
+									<td>32.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+							</tbody>
+						</table>
+			        </div>
+			        <div class="m-content" id="yt">
+			            <table class="water-monitor">
+							<caption>废水实时自动监控</caption>
+							<thead>
+								<tr>
+									<th>站点名称</th>
+									<th>化学需氧量浓度(mg/l)</th>
+									<th>氨氮浓度(mg/l)</th>
+									<th>检测时间</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Y001号监测点</td>
+									<td>40.88</td>
+									<td>3.18</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>Y002号监测点</td>
+									<td>49.70</td>
+									<td>2.86</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>Y003号监测点</td>
+									<td>39.00</td>
+									<td>4.23</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>Y004号监测点</td>
+									<td>45.13</td>
+									<td>3.01</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>Y005号监测点</td>
+									<td>54.85</td>
+									<td>3.21</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="air-monitor">
+							<caption>废气实时自动监控</caption>
+							<thead>
+								<tr>
+									<th>站点名称</th>
+									<th>二氧化碳浓度(mg/m<sup>3</sup>)</th>
+									<th>氮氧化物浓度(mg/m<sup>3</sup>)</th>
+									<th>烟尘浓度(mg/m<sup>3</sup>)</th>
+									<th>检测时间</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Y101号监测点</td>
+									<td>10.00</td>
+									<td>45.00</td>
+									<td>33.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>Y102号监测点</td>
+									<td>11.00</td>
+									<td>47.00</td>
+									<td>35.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>Y103号监测点</td>
+									<td>6.00</td>
+									<td>43.00</td>
+									<td>39.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>Y104号监测点</td>
+									<td>7.00</td>
+									<td>49.00</td>
+									<td>36.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+								<tr>
+									<td>Y105号监测点</td>
+									<td>9.00</td>
+									<td>48.00</td>
+									<td>38.00</td>
+									<td>2017/9/25 15:30:00</td>
+								</tr>
+							</tbody>
+						</table>
+			        </div>
+			    </div>
+			    <div class="up-side" id="architec-graph">
+			    </div>
+			</div>
+		</div>
+		<div class="down" style="width:100%;height: 33.3%;">
+		    <div class="down-side">
+		        <div id="gis-map" class="gis-map">
+		        </div>
+		        <div id="air-a" class="gis-msg">
+		            <div class="gis-msg-left">
+		                <p title="点击返回">大气点A</p>
+		                <img alt="" src="img/factory.jpg" style="width: 100%">
+		            </div>
+		            <div class="gis-msg-right">
+		                <ul class="air-list">
+							<li><span class="name">AQI</span><span class="value">92</span></li>
+							<li><span class="name">首要污染物</span><span class="value">O₃</span></li>
+							<li><span class="name">PM2.5浓度</span><span class="value">61</span></li>
+		                    <li><span class="name">SO₂浓度</span><span class="value">11</span></li>
+		                    <li><span class="name">NO₂浓度 </span><span class="value">45</span></li>
+		                    <li><span class="name">O₃浓度 </span><span class="value">97</span></li>
+		                </ul>
+		            </div>
+		        </div>
+		        <div id="air-b" class="gis-msg">
+		            <div class="gis-msg-left">
+		                <p title="点击返回">大气点B</p>
+		                <img alt="" src="img/factory.jpg" style="width: 100%">
+		            </div>
+		            <div class="gis-msg-right">
+		                <ul class="air-list">
+							<li><span class="name">AQI</span><span class="value">89</span></li>
+							<li><span class="name">首要污染物</span><span class="value">PM2.5</span></li>
+							<li><span class="name">PM2.5浓度</span><span class="value">69</span></li>
+		                    <li><span class="name">SO₂浓度</span><span class="value">9</span></li>
+		                    <li><span class="name">NO₂浓度 </span><span class="value">40</span></li>
+		                    <li><span class="name">O₃浓度 </span><span class="value">84</span></li>
+		                </ul>
+		            </div>
+		        </div>
+		        <div id="air-c" class="gis-msg">
+		            <div class="gis-msg-left">
+		                <p title="点击返回">大气点C</p>
+		                <img alt="" src="img/factory.jpg" style="width: 100%">
+		            </div>
+		            <div class="gis-msg-right">
+		                <ul class="air-list">
+							<li><span class="name">AQI</span><span class="value">93</span></li>
+							<li><span class="name">首要污染物</span><span class="value">PM2.5</span></li>
+							<li><span class="name">PM2.5浓度</span><span class="value">62</span></li>
+		                    <li><span class="name">SO₂浓度</span><span class="value">13</span></li>
+		                    <li><span class="name">NO₂浓度 </span><span class="value">39</span></li>
+		                    <li><span class="name">O₃浓度 </span><span class="value">93</span></li>
+		                </ul>
+		            </div>
+		        </div>
+		        <div id="water-a" class="gis-msg">
+		            <div class="gis-msg-left">
+		            	<p title="点击返回">测水点D</p>
+		                <img alt="" src="img/river.jpg" style="width: 100%">
+		            </div>
+		            <div class="gis-msg-right">
+		                <ul class="water-list">
+							<li><span class="name">PH值</span><span class="value">6.9</span></li>
+							<li><span class="name">化学需氧量浓度</span><span class="value">42.13</span></li>
+							<li><span class="name">氨氮浓度</span><span class="value">2.88</span></li>
+		                    <li><span class="name">水质类别</span><span class="value">V</span></li>
+		                </ul>
+		            </div>
+		        </div>
+		        <div id="water-b" class="gis-msg">
+		            <div class="gis-msg-left">
+		                <p title="点击返回">测水点E</p>
+		                <img alt="" src="img/river.jpg" style="width: 100%">
+		            </div>
+		            <div class="gis-msg-right">
+		                <ul class="water-list">
+							<li><span class="name">PH值</span><span class="value">6.8</span></li>
+							<li><span class="name">化学需氧量浓度</span><span class="value">18.26</span></li>
+							<li><span class="name">氨氮浓度</span><span class="value">0.42</span></li>
+		                    <li><span class="name">水质类别</span><span class="value">Ⅱ</span></li>
+		                </ul>
+		            </div>
+		        </div>
+		        <div id="water-c" class="gis-msg">
+		            <div class="gis-msg-left">
+		                <p title="点击返回">测水点F</p>
+		                <img alt="" src="img/river.jpg" style="width: 100%">
+		            </div>
+		            <div class="gis-msg-right">
+		                <ul class="water-list">
+							<li><span class="name">PH值</span><span class="value">6.8</span></li>
+							<li><span class="name">化学需氧量浓度</span><span class="value">39.48</span></li>
+							<li><span class="name">氨氮浓度</span><span class="value">1.96</span></li>
+		                    <li><span class="name">水质类别</span><span class="value">V</span></li>
+		                </ul>
+		            </div>
+		        </div>
+		    </div>
+		    <div class="down-side" id="petition-pie"></div>
+		    <div class="down-side" id="area-bar"></div>
+		    <div class="down-side" id="danger-pie"></div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="js/petition-pie-gjh.js"></script>
+<script type="text/javascript" src="js/danger-pie-gjh.js"></script>
+<script type="text/javascript" src="js/area-bar-gjh.js"></script>
+<script type="text/javascript" src="js/architec-graph-gjh.js"></script>
+<script type="text/javascript" src="js/air-line-gjh.js"></script>
+<script type="text/javascript" src="js/air-map-gjh.js"></script>
+<script type="text/javascript" src="js/resource-gauge-gjh.js"></script>
+</html>

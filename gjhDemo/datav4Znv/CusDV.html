@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+	<head lang="en">
+		<meta charset="UTF-8">
+		<meta name="renderer" content="webkit">
+		<title>中兴力维大屏演示</title>
+		<link rel="stylesheet" href="css/bigDV.css" />
+		<link rel="stylesheet" href="css/time.css" />
+		<link rel="stylesheet" href="css/notEchart.css" />
+	</head>
+
+	<body>
+		<div id="datavLoading">
+			<a target="_blank" href="http://data.aliyun.com/visual/datav">
+				<img src="img/loading.gif" />
+				<img class="text-logo" src="//cdn-service.datav.aliyun.com/datav-static/1.1.2_1/image/logo-text.png" width=100/>
+			</a>
+		</div>
+		<div class="datavLayout">
+			<div class="phead" style="height:10%;">
+				<div id="ptitle">
+					<canvas id="titleCanv" width="500" height="50"></canvas>
+				</div>
+				<div id="clock" class="light">
+					<div class="display">
+						<div class="digits"></div>
+					</div>
+				</div>
+			</div>
+			<div class="pbody" style="height: 90%;width:100%;position:absolute;">
+				<div class='side' style="top:1%;">
+					<div class='backImg'>
+						<img src="img/mod_bg.png" />
+					</div>
+					<div id="dftc-l1" class="sideCharts"></div>
+				</div>
+				<div class='side' style="top:49%">
+					<div class='backImg'>
+						<img src="img/mod_bg.png" />
+					</div>
+					<div id="dftc-l2" class="sideCharts"></div>
+				</div>
+
+				<div id="map-dftc" style="height: 100%;width:50%;left:25%;position: absolute;"></div>
+				<div class='side' style="top:1%;left:75%;">
+					<div class='backImg'>
+						<img src="img/mod_bg.png" />
+					</div>
+					<div id="dftc-r1" class="sideCharts"></div>
+				</div>
+				<div class='side' style="top:49%;left:75%;">
+					<div class='backImg'>
+						<img src="img/mod_bg.png" />
+					</div>
+					<div id="dftc-r2-newtime" style="display:none">最新 2017-09-18 16:16:04</div>
+					<div id="dftc-r2" class="sideCharts"></div>
+				</div>
+
+			</div>
+		</div>
+		<div id="error-cover"> </div>
+		<div id="back-screen"></div>
+	</body>
+	<script src="../../resources/js/common.js"></script>
+	<script type="text/javascript" src="config/config.js"></script>
+	<script type="text/javascript" src="js/jQuery-2.2.0.min.js"></script>
+	<script type="text/javascript" src="js/echarts/dist/echarts.min.js"></script>
+	<script src="js/echarts/src/china.js"></script>
+	<script type="text/javascript" src="js/bigDV.js"></script>
+	<script src="js/maps/map-dftc-bak.js"></script>
+	<script type="text/javascript" src="js/lines/line-dftc-l1.js"></script>
+	<script src="js/lines/line-dftc-l2.js"></script>
+	<script src="js/lines/line-dftc-r1.js"></script>
+	<script type="text/javascript" src="js/lines/line-dftc-r2.js"></script>
+	<script src="js/animation/three.js"></script>
+	<script src="js/animation/Projector.js"></script>
+	<script src="js/animation/CanvasRenderer.js"></script>
+	<script src="js/animation/stats.min.js"></script>
+	<script src="js/animation/tween.min.js"></script>
+<!-- 	<script src="js/particles.js"></script> -->
+	<script src="js/time/moment.min.js"></script>
+	<script src="js/time/clockTime.js"></script>
+	<script src="js/simu3DText.js"></script>
+	<!--<script src="js/bars/bar-dftc-r3.js"></script>-->
+
+</html>
